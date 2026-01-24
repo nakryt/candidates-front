@@ -49,7 +49,7 @@ export const MultiSelect: FC<MultiSelectProps> = (props) => {
         </label>
       )}
 
-      {selectedOptions.length > 0 && (
+      {selectedOptions?.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-2">
           {selectedOptions.map((option) => (
             <Chip

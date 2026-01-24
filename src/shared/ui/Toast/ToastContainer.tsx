@@ -9,7 +9,7 @@ interface ToastContainerProps {
 
 export const ToastContainer: FC<ToastContainerProps> = (props) => {
   const { toasts, onDismiss } = props;
-  if (toasts.length === 0) return null;
+  if (toasts?.length === 0) return null;
 
   return (
     <div

@@ -21,6 +21,7 @@ const previousActiveElementRef = useRef<HTMLElement | null>(null);
 ```
 
 **Призначення refs:**
+
 - `modalRef` - посилання на контейнер модального вікна для пошуку focusable елементів
 - `closeButtonRef` - посилання на кнопку закриття для встановлення початкового focus
 - `previousActiveElementRef` - зберігає елемент, який мав focus перед відкриттям модального вікна
@@ -41,7 +42,7 @@ useEffect(() => {
   );
 
   const firstElement = focusableElements[0];
-  const lastElement = focusableElements[focusableElements.length - 1];
+  const lastElement = focusableElements[focusableElements?.length - 1];
 
   const handleTab = (e: KeyboardEvent) => {
     if (e.key !== "Tab") return;
@@ -64,6 +65,7 @@ useEffect(() => {
 ```
 
 **Як це працює:**
+
 1. Знаходимо всі focusable елементи в модальному вікні
 2. Визначаємо перший та останній елемент
 3. При натисканні Tab на останньому елементі → переходимо на перший
@@ -87,6 +89,7 @@ useEffect(() => {
 ```
 
 **Пояснення:**
+
 - `role="dialog"` - визначає що це діалогове вікно
 - `aria-modal="true"` - повідомляє screen readers що це модальне вікно
 - `aria-labelledby="modal-title"` - зв'язує модальне вікно з заголовком
@@ -141,6 +144,7 @@ useEffect(() => {
 ```
 
 **Послідовність дій:**
+
 1. Зберігаємо поточний active element
 2. Блокуємо scroll body
 3. Focus на кнопку закриття (перший інтерактивний елемент)
@@ -163,6 +167,7 @@ return () => {
 ```
 
 **Що відбувається:**
+
 1. Розблоковуємо scroll body
 2. Видаляємо event listener
 3. **Повертаємо focus на елемент, який був активний до відкриття модального вікна**
@@ -184,6 +189,7 @@ return () => {
 ```
 
 **Чому це важливо:**
+
 - Кнопка містить тільки іконку `<X />`, без тексту
 - Screen readers потребують текстовий опис
 - `aria-label="Close dialog"` надає цей опис
@@ -198,6 +204,7 @@ return () => {
 **Test 1: Focus Trap (Tab Navigation)**
 
 ✅ Кроки:
+
 1. Відкрити модальне вікно (клік на "View details" картки кандидата)
 2. Натиснути Tab кілька разів
 3. Переконатися що focus циклюється між елементами модального вікна
@@ -211,6 +218,7 @@ return () => {
 **Test 2: Initial Focus**
 
 ✅ Кроки:
+
 1. Відкрити модальне вікно
 2. Перевірити що focus автоматично встановлюється на кнопку закриття (X)
 
@@ -221,6 +229,7 @@ return () => {
 **Test 3: Focus Restoration**
 
 ✅ Кроки:
+
 1. Встановити focus на кнопку "View details" конкретної картки кандидата
 2. Натиснути Enter або Space для відкриття модального вікна
 3. Закрити модальне вікно (Escape або клік на X)
@@ -233,6 +242,7 @@ return () => {
 **Test 4: Escape Key**
 
 ✅ Кроки:
+
 1. Відкрити модальне вікно
 2. Натиснути Escape
 
@@ -243,6 +253,7 @@ return () => {
 **Test 5: Screen Reader (Optional)**
 
 ✅ Кроки:
+
 1. Увімкнути VoiceOver (Mac) або NVDA (Windows)
 2. Відкрити модальне вікно
 3. Перевірити що screen reader оголошує:
@@ -257,6 +268,7 @@ return () => {
 **Test 6: Backdrop Click**
 
 ✅ Кроки:
+
 1. Відкрити модальне вікно
 2. Клікнути на backdrop (темна область навколо модального вікна)
 
@@ -297,6 +309,7 @@ const focusableElements = modalRef.current.querySelectorAll<HTMLElement>(
 ```
 
 **Що включає:**
+
 - `button` - всі кнопки
 - `[href]` - всі посилання
 - `input` - всі інпути
@@ -305,6 +318,7 @@ const focusableElements = modalRef.current.querySelectorAll<HTMLElement>(
 - `[tabindex]:not([tabindex="-1"])` - елементи з tabindex, крім -1
 
 **Що виключає:**
+
 - `[tabindex="-1"]` - елементи явно виключені з tab order
 - Disabled елементи (автоматично не focusable)
 
@@ -319,6 +333,7 @@ setTimeout(() => {
 ```
 
 **Чому потрібен setTimeout:**
+
 - React потребує час для рендерінгу DOM
 - `setTimeout(..., 0)` ставить виконання в кінець call stack
 - Гарантує що focus встановлюється після того як елемент з'явився в DOM
@@ -340,6 +355,7 @@ return () => {
 ```
 
 **Важливість cleanup:**
+
 - Розблоковує scroll body
 - Видаляє event listeners (запобігає memory leaks)
 - Повертає focus (UX для keyboard users)
@@ -351,15 +367,18 @@ return () => {
 ### Стандарти які виконано:
 
 ✅ **WCAG 2.1 Level A:**
+
 - 2.1.1 Keyboard - Всі функції доступні з клавіатури
 - 2.1.2 No Keyboard Trap - Focus trap з можливістю виходу (Escape)
 - 4.1.2 Name, Role, Value - ARIA атрибути надають role та назви
 
 ✅ **WCAG 2.1 Level AA:**
+
 - 2.4.3 Focus Order - Логічний порядок tab navigation
 - 3.2.4 Consistent Identification - Consistent aria-labels
 
 ✅ **WCAG 2.1 Level AAA:**
+
 - 2.4.8 Location - aria-labelledby та aria-describedby для контексту
 
 ---
@@ -382,6 +401,7 @@ return () => {
 **Проблема:** Якщо контент модального вікна змінюється динамічно (додаються нові кнопки), focusable elements не оновлюються.
 
 **Рішення (якщо потрібно):**
+
 - Додати `children` в dependencies useEffect для focus trap
 - Перераховувати focusable elements при зміні children
 
@@ -396,6 +416,7 @@ return () => {
 **Поточна поведінка:** Не підтримується (в дизайні немає nested modals)
 
 **Рішення (якщо потрібно):**
+
 - Stack previousActiveElement для кожного модального вікна
 - Управління z-index stack
 
@@ -404,11 +425,13 @@ return () => {
 ## 📚 Додаткові ресурси
 
 ### Accessibility Guidelines:
+
 - [ARIA Authoring Practices - Dialog Modal](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/)
 - [WCAG 2.1 - No Keyboard Trap](https://www.w3.org/WAI/WCAG21/Understanding/no-keyboard-trap.html)
 - [MDN - dialog element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog)
 
 ### Focus Management:
+
 - [React Focus Management](https://react.dev/reference/react-dom/components/common#managing-focus-with-a-ref)
 - [Building accessible modals](https://www.scottohara.me/blog/2019/03/05/open-dialog.html)
 
@@ -417,6 +440,7 @@ return () => {
 ## ✅ Completion Summary
 
 **Виконано:**
+
 - ✅ useRef для modal container, close button, previous active element
 - ✅ Focus trap logic (Tab і Shift+Tab циклюються)
 - ✅ ARIA атрибути (role, aria-modal, aria-labelledby, aria-describedby)
@@ -427,6 +451,7 @@ return () => {
 - ✅ Escape key підтримка (було раніше, залишили)
 
 **Accessibility Improvements:**
+
 - ✅ WCAG 2.1 Level A compliance
 - ✅ WCAG 2.1 Level AA compliance
 - ✅ Screen reader support
@@ -434,6 +459,7 @@ return () => {
 - ✅ Focus management
 
 **Testing:**
+
 - ✅ Всі тести проходять (9/9)
 - ✅ Manual testing checklist готовий
 - ✅ Screen reader compatible

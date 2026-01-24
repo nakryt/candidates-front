@@ -53,7 +53,7 @@ const Modal: FC<ModalProps> = (props) => {
     );
 
     const firstElement = focusableElements[0];
-    const lastElement = focusableElements[focusableElements.length - 1];
+    const lastElement = focusableElements[focusableElements?.length - 1];
 
     const handleTab = (e: KeyboardEvent) => {
       if (e.key !== "Tab") return;

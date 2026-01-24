@@ -90,13 +90,16 @@ const AddCandidateModal: FC<AddCandidateModalProps> = (props) => {
 
     if (!formData.name.trim()) {
       newErrors.name = "Name is required";
-    } else if (formData.name.length < 2 || formData.name.length > 100) {
+    } else if (formData.name?.length < 2 || formData.name?.length > 100) {
       newErrors.name = "Name must be between 2 and 100 characters";
     }
 
     if (!formData.position.trim()) {
       newErrors.position = "Position is required";
-    } else if (formData.position.length < 2 || formData.position.length > 100) {
+    } else if (
+      formData.position?.length < 2 ||
+      formData.position?.length > 100
+    ) {
       newErrors.position = "Position must be between 2 and 100 characters";
     }
 
@@ -112,14 +115,14 @@ const AddCandidateModal: FC<AddCandidateModalProps> = (props) => {
 
     if (
       formData.description.trim() &&
-      (formData.description.length < 10 || formData.description.length > 2000)
+      (formData.description?.length < 10 || formData.description?.length > 2000)
     ) {
       newErrors.description =
         "Description must be between 10 and 2000 characters";
     }
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return Object.keys(newErrors)?.length === 0;
   }, [formData]);
 
   const handleSubmit = async (e: React.FormEvent) => {

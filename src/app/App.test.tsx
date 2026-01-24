@@ -71,7 +71,7 @@ describe("App - Functional Testing (7.1)", () => {
     // Mock API calls with paginated response format
     candidateApi.getAll = vi.fn().mockResolvedValue({
       data: mockCandidates,
-      total: mockCandidates.length,
+      total: mockCandidates?.length,
       page: 1,
       limit: 100,
       totalPages: 1,
@@ -94,7 +94,7 @@ describe("App - Functional Testing (7.1)", () => {
     renderApp();
 
     // Initially should show loading skeleton
-    expect(screen.getAllByRole("status").length).toBeGreaterThan(0);
+    expect(screen.getAllByRole("status")?.length).toBeGreaterThan(0);
 
     // Wait for candidates to load
     await waitFor(() => {

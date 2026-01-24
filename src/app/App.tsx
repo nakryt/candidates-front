@@ -14,6 +14,7 @@ import { useCandidates } from "../entities/candidate/model/useCandidates";
 import { useFilters } from "../features/candidate-filters/model/useFilters";
 import { FilterBar } from "../features/candidate-filters/ui/FilterBar";
 import type { CreateCandidatePayload } from "../shared/api/candidateApi";
+import { useToast } from "../shared/hooks/useToast";
 import { PageLayout } from "../shared/layout/PageLayout";
 import { filterCandidates } from "../shared/lib/filterCandidates";
 import { lazyWithPreload } from "../shared/lib/lazyWithPreload";
@@ -22,10 +23,9 @@ import { Button } from "../shared/ui/Button";
 import { ErrorBoundary } from "../shared/ui/ErrorBoundary";
 import { Plus } from "../shared/ui/icons";
 import {
-  LazyLoadFallback,
   InlineLoadingFallback,
+  LazyLoadFallback,
 } from "../shared/ui/LazyLoadFallback";
-import { useToast } from "../shared/hooks/useToast";
 
 const { lazy: CandidateGrid, preload: preloadCandidateGrid } = lazyWithPreload(
   () => import("../entities/candidate/ui/CandidateGrid"),
@@ -76,10 +76,10 @@ export const App = () => {
 
   // Preload grid component when data is available
   useEffect(() => {
-    if (!loading && !error && candidates.length > 0) {
+    if (!loading && !error && candidates?.length > 0) {
       preloadCandidateGrid();
     }
-  }, [loading, error, candidates.length]);
+  }, [loading, error, candidates?.length]);
 
   // Handler to preload modal and details on hover
   const handlePreloadDetails = useCallback(() => {
@@ -142,7 +142,7 @@ export const App = () => {
           </Suspense>
         </ErrorBoundary>
       );
-    if (filteredCandidates.length === 0)
+    if (filteredCandidates?.length === 0)
       return (
         <ErrorBoundary>
           <Suspense fallback={<LazyLoadFallback minHeight="400px" />}>

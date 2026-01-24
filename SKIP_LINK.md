@@ -13,6 +13,7 @@ Implemented a "skip to main content" link to improve keyboard navigation accessi
 **Issue:** No mechanism for keyboard users to skip repetitive header content and navigation elements.
 
 **Impact:**
+
 - Keyboard users had to tab through header elements on every page load
 - Poor user experience for screen reader users
 - WCAG 2.4.1 non-compliance
@@ -51,6 +52,7 @@ Added a visually hidden skip link that becomes visible when focused, positioned 
 ### 3. Tailwind CSS Classes Breakdown
 
 #### Visibility Management
+
 - **`sr-only`** - Screen reader only (visually hidden by default)
   - Hides element from visual users
   - Remains accessible to screen readers
@@ -61,12 +63,14 @@ Added a visually hidden skip link that becomes visible when focused, positioned 
   - Makes element visible for keyboard users
 
 #### Positioning (Focus State)
+
 - **`focus:absolute`** - Absolute positioning when focused
 - **`focus:top-4`** - 1rem from top (16px)
 - **`focus:left-4`** - 1rem from left (16px)
 - **`focus:z-50`** - High z-index to appear above header
 
 #### Styling (Focus State)
+
 - **`focus:px-4`** - Horizontal padding (1rem)
 - **`focus:py-2`** - Vertical padding (0.5rem)
 - **`focus:bg-blue-600`** - Blue background (#2563eb)
@@ -75,6 +79,7 @@ Added a visually hidden skip link that becomes visible when focused, positioned 
 - **`focus:shadow-lg`** - Large shadow for depth
 
 #### Focus Ring (Accessibility)
+
 - **`focus:outline-none`** - Remove default outline
 - **`focus:ring-2`** - 2px focus ring
 - **`focus:ring-blue-500`** - Blue ring color (#3b82f6)
@@ -83,6 +88,7 @@ Added a visually hidden skip link that becomes visible when focused, positioned 
 ## Visual Behavior
 
 ### Default State (Hidden)
+
 ```
 ┌─────────────────────────────────┐
 │ [Skip link - hidden]            │
@@ -97,6 +103,7 @@ Added a visually hidden skip link that becomes visible when focused, positioned 
 ```
 
 ### Focused State (Visible)
+
 ```
 ┌─────────────────────────────────┐
 │ ┏━━━━━━━━━━━━━━━━━━━━━━━━━┓   │
@@ -115,6 +122,7 @@ Added a visually hidden skip link that becomes visible when focused, positioned 
 ## User Flow
 
 ### Keyboard Navigation
+
 1. User loads page
 2. User presses **Tab** key
 3. Skip link appears at top-left with blue background
@@ -123,6 +131,7 @@ Added a visually hidden skip link that becomes visible when focused, positioned 
 6. User continues tabbing through main content
 
 ### Screen Reader Experience
+
 1. Screen reader announces: "Skip to main content, link"
 2. User activates link
 3. Screen reader announces: "Main content region"
@@ -133,6 +142,7 @@ Added a visually hidden skip link that becomes visible when focused, positioned 
 ### Manual Testing Checklist
 
 #### ✅ Visual Testing
+
 - [ ] Load page in browser
 - [ ] Press Tab key → skip link appears at top-left
 - [ ] Verify blue background, white text, rounded corners
@@ -140,6 +150,7 @@ Added a visually hidden skip link that becomes visible when focused, positioned 
 - [ ] Press Escape or Tab again → skip link disappears from view
 
 #### ✅ Functional Testing
+
 - [ ] Tab to skip link
 - [ ] Press Enter → focus jumps to main content
 - [ ] Verify URL changes to `#main-content`
@@ -147,6 +158,7 @@ Added a visually hidden skip link that becomes visible when focused, positioned 
 - [ ] Test with mouse click (should also work)
 
 #### ✅ Screen Reader Testing
+
 - [ ] **NVDA (Windows):**
   - Open NVDA
   - Tab to skip link
@@ -168,6 +180,7 @@ Added a visually hidden skip link that becomes visible when focused, positioned 
   - Verify focus moves to main content
 
 #### ✅ Browser Compatibility
+
 - [ ] Chrome/Edge (Chromium) - ✅ Tested
 - [ ] Firefox - ✅ Tested
 - [ ] Safari - ✅ Tested
@@ -175,6 +188,7 @@ Added a visually hidden skip link that becomes visible when focused, positioned 
 - [ ] Chrome Mobile (Android) - Should test
 
 #### ✅ Keyboard Combinations
+
 - [ ] Tab → Shows skip link
 - [ ] Shift+Tab → Can navigate backwards
 - [ ] Enter → Activates link
@@ -198,13 +212,14 @@ Duration    1.75s
 ### Accessibility Testing Tools
 
 #### axe DevTools
+
 ```javascript
 // Run in browser console
-axe.run().then(results => {
-  if (results.violations.length === 0) {
-    console.log('No accessibility violations!');
+axe.run().then((results) => {
+  if (results.violations?.length === 0) {
+    console.log("No accessibility violations!");
   } else {
-    console.log('Violations:', results.violations);
+    console.log("Violations:", results.violations);
   }
 });
 ```
@@ -212,6 +227,7 @@ axe.run().then(results => {
 Expected Result: **0 violations** related to bypass blocks
 
 #### Lighthouse Audit
+
 ```bash
 # Run Lighthouse
 npm run build
@@ -221,6 +237,7 @@ npx lighthouse http://localhost:4173 --only-categories=accessibility
 ```
 
 #### WAVE (Web Accessibility Evaluation Tool)
+
 1. Install WAVE browser extension
 2. Navigate to application
 3. Run WAVE
@@ -234,11 +251,13 @@ npx lighthouse http://localhost:4173 --only-categories=accessibility
 ### Success Criterion 2.4.1: Bypass Blocks (Level A)
 
 **Requirement:**
+
 > A mechanism is available to bypass blocks of content that are repeated on multiple Web pages.
 
 **Compliance:** ✅ **PASS**
 
 **Evidence:**
+
 - Skip link is the first focusable element
 - Link target (`#main-content`) exists and is valid
 - Keyboard activation works correctly
@@ -270,33 +289,39 @@ npx lighthouse http://localhost:4173 --only-categories=accessibility
 ## Performance Impact
 
 ### Bundle Size
+
 - **Change:** +0.1 KB (minified)
 - **Impact:** Negligible
 
 ### Runtime Performance
+
 - **No JavaScript required** - Pure HTML/CSS solution
 - **No re-renders** - Static content
 - **No event listeners** - Uses native anchor behavior
 
 ### Accessibility Tree
+
 - **No additional nodes** in a11y tree when hidden
 - **1 additional link** when focused (expected)
 
 ## Browser Support
 
 ### Modern Browsers (100% support)
+
 - ✅ Chrome 90+
 - ✅ Firefox 88+
 - ✅ Safari 14+
 - ✅ Edge 90+
 
 ### Older Browsers
+
 - ✅ Chrome 60+ (with Tailwind compatibility)
 - ✅ Firefox 55+
 - ✅ Safari 10+
 - ✅ Edge 79+ (Chromium-based)
 
 ### Mobile Browsers
+
 - ✅ iOS Safari 12+
 - ✅ Chrome Mobile
 - ⚠️ Note: Mobile browsers may not show focus states consistently
@@ -304,42 +329,50 @@ npx lighthouse http://localhost:4173 --only-categories=accessibility
 ## Alternative Implementations (Not Used)
 
 ### 1. Permanently Visible Skip Link
+
 ```typescript
 // Not implemented - too intrusive
 <a href="#main-content" className="absolute top-0 left-0">
   Skip to main content
 </a>
 ```
+
 **Reason:** Takes up visual space unnecessarily
 
 ### 2. ARIA Landmarks Only
+
 ```typescript
 // Not sufficient alone
 <nav aria-label="Main navigation">...</nav>
 <main aria-label="Main content">...</main>
 ```
+
 **Reason:** Not all screen readers support landmark navigation well
 
 ### 3. JavaScript Focus Management
+
 ```typescript
 // Overkill for this use case
-const skipButton = document.querySelector('.skip-link');
-skipButton.addEventListener('click', (e) => {
+const skipButton = document.querySelector(".skip-link");
+skipButton.addEventListener("click", (e) => {
   e.preventDefault();
-  document.querySelector('#main-content').focus();
+  document.querySelector("#main-content").focus();
 });
 ```
+
 **Reason:** Native anchor behavior works perfectly
 
 ## Future Enhancements
 
 ### Potential Improvements
+
 1. **Multiple skip links** - Skip to navigation, skip to footer, etc.
 2. **Keyboard shortcuts** - Access key attribute (e.g., `accesskey="1"`)
 3. **Animation** - Smooth scroll to main content
 4. **Custom positioning** - User preference for skip link location
 
 ### Not Recommended
+
 - ❌ Using `tabindex="-1"` on main (unnecessary, adds complexity)
 - ❌ JavaScript-based skip links (over-engineering)
 - ❌ Multiple skip links to same target (confusing)
@@ -347,39 +380,47 @@ skipButton.addEventListener('click', (e) => {
 ## Troubleshooting
 
 ### Issue: Skip link not visible on focus
+
 **Cause:** CSS conflict or specificity issue
 **Solution:** Ensure `focus:not-sr-only` has higher specificity
 
 ### Issue: Focus not jumping to main content
+
 **Cause:** `id="main-content"` missing or incorrect
 **Solution:** Verify `<main id="main-content">` exists in DOM
 
 ### Issue: Skip link doesn't appear on first Tab
+
 **Cause:** Another element is receiving focus first
 **Solution:** Ensure skip link is first in DOM order
 
 ### Issue: Screen reader not announcing skip link
+
 **Cause:** Link is using `display: none` or `visibility: hidden`
 **Solution:** Use proper `sr-only` class (position + clip-path)
 
 ## References
 
 ### WCAG Guidelines
+
 - [WCAG 2.1 - 2.4.1 Bypass Blocks (Level A)](https://www.w3.org/WAI/WCAG21/Understanding/bypass-blocks.html)
 - [WCAG 2.1 - 2.4.4 Link Purpose (In Context) (Level A)](https://www.w3.org/WAI/WCAG21/Understanding/link-purpose-in-context.html)
 
 ### Best Practices
+
 - [WebAIM: Skip Navigation Links](https://webaim.org/techniques/skipnav/)
 - [A11Y Project: Skip Links](https://www.a11yproject.com/posts/skip-nav-links/)
 - [Inclusive Components: Skip Links](https://inclusive-components.design/skip-links/)
 
 ### Tailwind CSS
+
 - [Tailwind - Screen Reader Utilities](https://tailwindcss.com/docs/screen-readers)
 - [Tailwind - Focus Utilities](https://tailwindcss.com/docs/focus)
 
 ## Summary
 
 ### What Was Done
+
 ✅ Added skip link before header
 ✅ Added `id="main-content"` to main element
 ✅ Styled with Tailwind (visible only on focus)
@@ -387,6 +428,7 @@ skipButton.addEventListener('click', (e) => {
 ✅ Verified WCAG 2.4.1 compliance
 
 ### Impact
+
 - **Accessibility:** Improved keyboard navigation
 - **WCAG Compliance:** Now compliant with 2.4.1 (Level A)
 - **User Experience:** Faster navigation for power users
@@ -394,6 +436,7 @@ skipButton.addEventListener('click', (e) => {
 - **Maintenance:** Zero ongoing maintenance required
 
 ### Metrics
+
 - **Lines of Code:** +8 (skip link + main id)
 - **Bundle Size:** +0.1 KB
 - **Tests Passing:** 9/9 ✅

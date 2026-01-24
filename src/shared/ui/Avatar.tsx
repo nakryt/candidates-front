@@ -34,7 +34,7 @@ export const Avatar: FC<AvatarProps> = (props) => {
     "bg-indigo-100 text-indigo-700",
   ];
 
-  const colorIndex = name.length % colors.length;
+  const colorIndex = name?.length % colors?.length;
   const colorClass = colors[colorIndex];
 
   return (
