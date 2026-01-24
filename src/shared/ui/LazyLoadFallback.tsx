@@ -38,10 +38,6 @@ export const LazyLoadFallback: FC<LazyLoadFallbackProps> = (props) => {
   );
 };
 
-/**
- * Minimal inline spinner for smaller loading contexts
- * Used for modal/overlay lazy loading where skeleton doesn't make sense
- */
 export const InlineLoadingFallback: FC = () => {
   return (
     <div className="flex items-center justify-center p-4" role="status">
@@ -50,9 +46,6 @@ export const InlineLoadingFallback: FC = () => {
   );
 };
 
-/**
- * Full-screen loading fallback for major route/page transitions
- */
 export const FullScreenLoadingFallback: FC = () => {
   return (
     <div
