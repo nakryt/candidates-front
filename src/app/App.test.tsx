@@ -1,17 +1,17 @@
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { App } from "./App";
-import { candidateApi } from "../shared/api/candidateApi";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Candidate } from "../entities/candidate/model/types";
-import { ToastProvider } from "../shared/lib/useToast";
+import { candidateApi } from "../shared/api/candidateApi";
+import { ToastProvider } from "../shared/contexts/ToastContext";
+import { App } from "./App";
 
 // Helper function to render App with ToastProvider
 const renderApp = () => {
   return render(
     <ToastProvider>
       <App />
-    </ToastProvider>
+    </ToastProvider>,
   );
 };
 
@@ -76,13 +76,13 @@ describe("App - Functional Testing (7.1)", () => {
       limit: 100,
       totalPages: 1,
     });
-    candidateApi.updateStatus = vi.fn().mockImplementation(
-      async (id, status) => {
+    candidateApi.updateStatus = vi
+      .fn()
+      .mockImplementation(async (id, status) => {
         const candidate = mockCandidates.find((c) => c.id === id);
         if (!candidate) throw new Error("Candidate not found");
         return { ...candidate, status, updatedAt: new Date().toISOString() };
-      }
-    );
+      });
   });
 
   afterEach(() => {
@@ -129,7 +129,7 @@ describe("App - Functional Testing (7.1)", () => {
     expect(screen.getByText("john.doe@example.com")).toBeInTheDocument();
     expect(screen.getByText("+1234567890")).toBeInTheDocument();
     expect(
-      screen.getByText(/Experienced frontend developer/)
+      screen.getByText(/Experienced frontend developer/),
     ).toBeInTheDocument();
     expect(screen.getByText("JavaScript")).toBeInTheDocument();
     expect(screen.getByText("TypeScript")).toBeInTheDocument();
@@ -235,7 +235,9 @@ describe("App - Functional Testing (7.1)", () => {
     expect(screen.getByText("Mike Johnson")).toBeInTheDocument();
 
     // Click "Active" status filter button
-    const activeButton = screen.getByRole("button", { name: /filter by active/i });
+    const activeButton = screen.getByRole("button", {
+      name: /filter by active/i,
+    });
     await user.click(activeButton);
 
     // Only Jane (active) should be visible
@@ -254,7 +256,9 @@ describe("App - Functional Testing (7.1)", () => {
     });
 
     // Apply status filter first
-    const interviewButton = screen.getByRole("button", { name: /filter by interview/i });
+    const interviewButton = screen.getByRole("button", {
+      name: /filter by interview/i,
+    });
     await user.click(interviewButton);
 
     // John (interview) should be visible, others not

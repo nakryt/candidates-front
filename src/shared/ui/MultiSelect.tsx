@@ -19,7 +19,7 @@ interface MultiSelectProps {
 export const MultiSelect: FC<MultiSelectProps> = (props) => {
   const {
     label,
-    options,
+    options = [],
     selectedIds,
     onChange,
     error,
