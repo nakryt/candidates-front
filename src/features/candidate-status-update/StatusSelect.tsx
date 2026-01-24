@@ -9,10 +9,6 @@ interface StatusSelectProps {
   disabled?: boolean;
 }
 
-/**
- * StatusSelect component - allows changing candidate status
- * Used in CandidateDetails modal
- */
 const StatusSelect: FC<StatusSelectProps> = (props) => {
   const { currentStatus, onChange, disabled } = props;
   const options = STATUS_OPTIONS.map((status) => ({
@@ -32,6 +28,4 @@ const StatusSelect: FC<StatusSelectProps> = (props) => {
   );
 };
 
-// Keep named export for backward compatibility
-export { StatusSelect };
 export default StatusSelect;

@@ -8,10 +8,6 @@ interface CandidateGridProps {
   onPreloadDetails?: () => void;
 }
 
-/**
- * CandidateGrid component - displays candidates in a responsive grid layout
- * Lazy-loaded to improve initial page load performance
- */
 const CandidateGrid: FC<CandidateGridProps> = (props) => {
   const { candidates, onViewDetails, onPreloadDetails } = props;
   return (

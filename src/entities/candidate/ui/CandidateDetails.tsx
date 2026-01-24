@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import { StatusSelect } from "../../../features/candidate-status-update/StatusSelect";
+import StatusSelect from "../../../features/candidate-status-update/StatusSelect";
 import { Avatar } from "../../../shared/ui/Avatar";
 import { Chip } from "../../../shared/ui/Chip";
 import { Calendar, Mail, Phone } from "../../../shared/ui/icons";
@@ -10,10 +10,6 @@ interface CandidateDetailsProps {
   onStatusChange: (id: number, status: CandidateStatus) => Promise<void>;
 }
 
-/**
- * CandidateDetails component - displays full candidate information in modal
- * Lazy-loaded since it's only shown when user clicks "View Details"
- */
 const CandidateDetails: FC<CandidateDetailsProps> = (props) => {
   const { candidate, onStatusChange } = props;
   const handleChangeStatus = (status: CandidateStatus) =>

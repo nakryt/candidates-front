@@ -7,10 +7,6 @@ interface ErrorScreenProps {
   onRetry: () => void;
 }
 
-/**
- * ErrorScreen component - displays error state with retry action
- * Lazy-loaded since it's only shown when an error occurs
- */
 const ErrorScreen: FC<ErrorScreenProps> = ({ message, onRetry }) => {
   return (
     <div className="flex flex-col items-center justify-center min-h-[400px] text-center p-6 bg-red-50 rounded-2xl border border-red-100">

@@ -1,10 +1,6 @@
 import type { FC } from "react";
 import { SearchX } from "../ui/icons";
 
-/**
- * EmptyState component - displays message when no candidates match filters
- * Lazy-loaded since it's only shown in specific conditions
- */
 const EmptyState: FC = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-[400px] text-center p-6 bg-white rounded-2xl border border-gray-100 shadow-sm">

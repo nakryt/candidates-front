@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useOptimistic, useState } from "react";
-import { candidateApi } from "../../../shared/api/candidateApi";
+import {
+  candidateApi,
+  type CreateCandidatePayload,
+} from "../../../shared/api/candidateApi";
 import { isApiError } from "../../../shared/api/types";
 import type { Candidate, CandidateStatus } from "./types";
 
@@ -25,18 +28,22 @@ function getErrorMessage(error: unknown): string {
   return "An unexpected error occurred. Please try again.";
 }
 
-type OptimisticAction = {
-  type: "update_status";
-  id: number;
-  status: CandidateStatus;
-};
+type OptimisticAction =
+  | {
+      type: "update_status";
+      id: number;
+      status: CandidateStatus;
+    }
+  | {
+      type: "add";
+      candidate: Candidate;
+    };
 
 export const useCandidates = () => {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // useOptimistic hook for optimistic updates
   const [optimisticCandidates, updateOptimisticCandidates] = useOptimistic(
     candidates,
     (state: Candidate[], action: OptimisticAction) => {
@@ -50,6 +57,9 @@ export const useCandidates = () => {
               }
             : c,
         );
+      }
+      if (action.type === "add") {
+        return [action.candidate, ...state];
       }
       return state;
     },
@@ -94,6 +104,40 @@ export const useCandidates = () => {
     [candidates, updateOptimisticCandidates],
   );
 
+  const createCandidate = useCallback(
+    async (payload: CreateCandidatePayload) => {
+      const optimisticCandidate: Candidate = {
+        id: Date.now(),
+        name: payload.name,
+        position: payload.position,
+        email: payload.email,
+        phone: payload.phone,
+        description: payload.description || "",
+        status: payload.status || "active",
+        skills: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      updateOptimisticCandidates({
+        type: "add",
+        candidate: optimisticCandidate,
+      });
+
+      try {
+        const newCandidate = await candidateApi.create(payload);
+
+        setCandidates((prev) => [newCandidate, ...prev]);
+
+        return newCandidate;
+      } catch (err) {
+        console.error("Failed to create candidate:", err);
+        throw err;
+      }
+    },
+    [updateOptimisticCandidates],
+  );
+
   useEffect(() => {
     fetchCandidates();
   }, [fetchCandidates]);
@@ -103,6 +147,7 @@ export const useCandidates = () => {
     loading,
     error,
     updateCandidateStatus,
+    createCandidate,
     refetch: fetchCandidates,
   };
 };

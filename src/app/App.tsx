@@ -13,18 +13,20 @@ import type {
 import { useCandidates } from "../entities/candidate/model/useCandidates";
 import { useFilters } from "../features/candidate-filters/model/useFilters";
 import { FilterBar } from "../features/candidate-filters/ui/FilterBar";
+import type { CreateCandidatePayload } from "../shared/api/candidateApi";
 import { PageLayout } from "../shared/layout/PageLayout";
 import { filterCandidates } from "../shared/lib/filterCandidates";
 import { lazyWithPreload } from "../shared/lib/lazyWithPreload";
-import { useToast } from "../shared/lib/useToast";
 import { LoadingScreen } from "../shared/states/LoadingScreen";
+import { Button } from "../shared/ui/Button";
 import { ErrorBoundary } from "../shared/ui/ErrorBoundary";
+import { Plus } from "../shared/ui/icons";
 import {
   LazyLoadFallback,
   InlineLoadingFallback,
 } from "../shared/ui/LazyLoadFallback";
+import { useToast } from "../shared/hooks/useToast";
 
-// Lazy load heavy components with preload capability
 const { lazy: CandidateGrid, preload: preloadCandidateGrid } = lazyWithPreload(
   () => import("../entities/candidate/ui/CandidateGrid"),
 );
@@ -33,14 +35,23 @@ const { lazy: CandidateDetails, preload: preloadCandidateDetails } =
 const { lazy: Modal, preload: preloadModal } = lazyWithPreload(
   () => import("../shared/ui/Modal"),
 );
+const { lazy: AddCandidateModal, preload: preloadAddCandidateModal } =
+  lazyWithPreload(
+    () => import("../features/add-candidate/ui/AddCandidateModal"),
+  );
 
-// Less critical components - simple lazy load without preload
 const EmptyState = lazy(() => import("../shared/states/EmptyState"));
 const ErrorScreen = lazy(() => import("../shared/states/ErrorScreen"));
 
 export const App = () => {
-  const { candidates, loading, error, updateCandidateStatus, refetch } =
-    useCandidates();
+  const {
+    candidates,
+    loading,
+    error,
+    updateCandidateStatus,
+    createCandidate,
+    refetch,
+  } = useCandidates();
 
   const {
     searchQuery,
@@ -55,9 +66,11 @@ export const App = () => {
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(
     null,
   );
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const filteredCandidates = useMemo(
-    () => filterCandidates(candidates, debouncedSearchQuery, statusFilter),
+    () =>
+      filterCandidates(candidates ?? [], debouncedSearchQuery, statusFilter),
     [candidates, debouncedSearchQuery, statusFilter],
   );
 
@@ -102,6 +115,23 @@ export const App = () => {
     [updateCandidateStatus, selectedCandidate, showToast],
   );
 
+  const handleOpenAddModal = useCallback(() => {
+    preloadAddCandidateModal();
+    setIsAddModalOpen(true);
+  }, []);
+
+  const handleCloseAddModal = useCallback(() => {
+    setIsAddModalOpen(false);
+  }, []);
+
+  const handleCreateCandidate = useCallback(
+    async (payload: CreateCandidatePayload) => {
+      await createCandidate(payload);
+      showToast("Candidate created successfully!", "success");
+    },
+    [createCandidate, showToast],
+  );
+
   const renderContent = () => {
     if (loading) return <LoadingScreen />;
     if (error)
@@ -136,10 +166,19 @@ export const App = () => {
   return (
     <PageLayout>
       <div className="space-y-8">
-        <div className="flex flex-col space-y-2">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">
             Candidates
           </h2>
+          <Button
+            variant="primary"
+            onClick={handleOpenAddModal}
+            onMouseEnter={() => preloadAddCandidateModal()}
+            className="w-full sm:w-auto"
+          >
+            <Plus className="h-5 w-5 mr-2" />
+            Add Candidate
+          </Button>
         </div>
 
         <FilterBar
@@ -167,6 +206,18 @@ export const App = () => {
                 />
               </Suspense>
             </Modal>
+          </Suspense>
+        </ErrorBoundary>
+      )}
+
+      {isAddModalOpen && (
+        <ErrorBoundary>
+          <Suspense fallback={<InlineLoadingFallback />}>
+            <AddCandidateModal
+              isOpen={isAddModalOpen}
+              onClose={handleCloseAddModal}
+              onSubmit={handleCreateCandidate}
+            />
           </Suspense>
         </ErrorBoundary>
       )}

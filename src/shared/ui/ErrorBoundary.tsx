@@ -1,6 +1,6 @@
 import { Component, type ReactNode } from "react";
-import { AlertCircle } from "./icons";
 import { Button } from "./Button";
+import { AlertCircle } from "./icons";
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -12,10 +12,6 @@ interface ErrorBoundaryState {
   error: Error | null;
 }
 
-/**
- * ErrorBoundary component to catch and handle errors in lazy-loaded components
- * Provides a user-friendly fallback UI when errors occur during rendering
- */
 export class ErrorBoundary extends Component<
   ErrorBoundaryProps,
   ErrorBoundaryState
@@ -30,7 +26,6 @@ export class ErrorBoundary extends Component<
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    // Log error to console for debugging
     console.error("ErrorBoundary caught an error:", error, errorInfo);
   }
 

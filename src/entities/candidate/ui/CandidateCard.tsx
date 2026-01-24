@@ -10,10 +10,6 @@ interface CandidateCardProps {
   onPreloadDetails?: () => void;
 }
 
-/**
- * CandidateCard component - displays candidate summary in a card
- * Preloads modal/details components on hover for better UX
- */
 const CandidateCardComponent: FC<CandidateCardProps> = (props) => {
   const { candidate, onViewDetails, onPreloadDetails } = props;
 

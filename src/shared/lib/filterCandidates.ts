@@ -1,10 +1,14 @@
 import type { Candidate, CandidateStatus } from "../types/candidate";
 
 export function filterCandidates(
-  candidates: Candidate[],
+  candidates: Candidate[] | undefined | null,
   searchQuery: string,
   statusFilter: CandidateStatus | "all",
 ): Candidate[] {
+  if (!candidates || !Array.isArray(candidates)) {
+    return [];
+  }
+
   return candidates.filter((candidate) => {
     // Check if candidate name matches search query
     const matchesSearch = candidate.name

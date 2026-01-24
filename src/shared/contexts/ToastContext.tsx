@@ -11,12 +11,6 @@ interface ToastProviderProps {
   children: ReactNode;
 }
 
-/**
- * ToastProvider component
- *
- * Provides toast notification functionality to the app
- * Manages toast state and renders ToastContainer
- */
 export const ToastProvider: FC<ToastProviderProps> = ({ children }) => {
   const [toasts, setToasts] = useState<Toast[]>([]);
 

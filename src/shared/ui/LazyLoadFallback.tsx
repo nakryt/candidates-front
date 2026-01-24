@@ -1,6 +1,6 @@
 import type { FC } from "react";
-import { CandidateGridSkeleton } from "../../entities/candidate/ui/CandidateGridSkeleton";
 import { CandidateDetailsSkeleton } from "../../entities/candidate/ui/CandidateDetailsSkeleton";
+import { CandidateGridSkeleton } from "../../entities/candidate/ui/CandidateGridSkeleton";
 import { Spinner } from "./Spinner";
 
 interface LazyLoadFallbackProps {
@@ -9,21 +9,13 @@ interface LazyLoadFallbackProps {
   variant?: "spinner" | "grid" | "details";
 }
 
-/**
- * Fallback component displayed while lazy-loaded components are being loaded
- * Provides a consistent loading experience across all lazy-loaded boundaries
- *
- * Variants:
- * - spinner: Simple spinner with message (for generic/small components)
- * - grid: Candidate grid skeleton (for CandidateGrid lazy loading)
- * - details: Candidate details skeleton (for CandidateDetails lazy loading)
- */
-export const LazyLoadFallback: FC<LazyLoadFallbackProps> = ({
-  minHeight = "200px",
-  message = "Loading...",
-  variant = "spinner",
-}) => {
-  // Use skeleton loaders for better perceived performance
+export const LazyLoadFallback: FC<LazyLoadFallbackProps> = (props) => {
+  const {
+    minHeight = "200px",
+    message = "Loading...",
+    variant = "spinner",
+  } = props;
+
   if (variant === "grid") {
     return <CandidateGridSkeleton count={8} />;
   }
@@ -32,7 +24,6 @@ export const LazyLoadFallback: FC<LazyLoadFallbackProps> = ({
     return <CandidateDetailsSkeleton />;
   }
 
-  // Fallback to spinner for generic components or legacy usage
   return (
     <div
       className="flex flex-col items-center justify-center space-y-3"

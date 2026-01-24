@@ -10,10 +10,6 @@ interface ModalProps {
   className?: string;
 }
 
-/**
- * Modal component with focus trap and accessibility features
- * Lazy-loaded since modals are only shown on user interaction
- */
 const Modal: FC<ModalProps> = (props) => {
   const { isOpen, onClose, title, children, className } = props;
   const modalRef = useRef<HTMLDivElement>(null);
@@ -30,7 +26,6 @@ const Modal: FC<ModalProps> = (props) => {
     previousActiveElementRef.current = document.activeElement as HTMLElement;
     document.body.style.overflow = "hidden";
 
-    // Use AbortController for better cleanup and bfcache compatibility
     const controller = new AbortController();
     window.addEventListener("keydown", handleEscape, {
       signal: controller.signal,
@@ -42,7 +37,7 @@ const Modal: FC<ModalProps> = (props) => {
 
     return () => {
       document.body.style.overflow = "unset";
-      controller.abort(); // Automatically removes all event listeners
+      controller.abort();
 
       if (previousActiveElementRef.current) {
         previousActiveElementRef.current.focus();
@@ -72,11 +67,12 @@ const Modal: FC<ModalProps> = (props) => {
       }
     };
 
-    // Use AbortController for better cleanup and bfcache compatibility
     const controller = new AbortController();
-    window.addEventListener("keydown", handleTab, { signal: controller.signal });
+    window.addEventListener("keydown", handleTab, {
+      signal: controller.signal,
+    });
 
-    return () => controller.abort(); // Automatically removes all event listeners
+    return () => controller.abort();
   }, [isOpen]);
 
   if (!isOpen) return null;
