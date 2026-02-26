@@ -46,6 +46,7 @@ const ErrorScreen = lazy(() => import("../shared/states/ErrorScreen"));
 export const App = () => {
   const {
     candidates,
+    total,
     loading,
     error,
     updateCandidateStatus,
@@ -101,18 +102,13 @@ export const App = () => {
   const handleStatusChange = useCallback(
     async (id: number, newStatus: CandidateStatus) => {
       try {
-        const updated = await updateCandidateStatus(id, newStatus);
-
-        if (selectedCandidate?.id === id) {
-          setSelectedCandidate(updated);
-        }
-
+        await updateCandidateStatus(id, newStatus);
         showToast("Status updated successfully!", "success");
       } catch {
         showToast("Failed to update status. Please try again.", "error");
       }
     },
-    [updateCandidateStatus, selectedCandidate, showToast],
+    [updateCandidateStatus, showToast],
   );
 
   const handleOpenAddModal = useCallback(() => {
@@ -132,7 +128,7 @@ export const App = () => {
     [createCandidate, showToast],
   );
 
-  const renderContent = () => {
+  const content = useMemo(() => {
     if (loading) return <LoadingScreen />;
     if (error)
       return (
@@ -161,7 +157,7 @@ export const App = () => {
         </Suspense>
       </ErrorBoundary>
     );
-  };
+  }, [loading, error, filteredCandidates, refetch, handleViewDetails, handlePreloadDetails]);
 
   return (
     <PageLayout>
@@ -188,14 +184,20 @@ export const App = () => {
           onStatusChange={setStatusFilter}
         />
 
-        {renderContent()}
+        {total > candidates.length && (
+          <div className="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-2 rounded-md text-sm">
+            Showing {candidates.length} of {total} candidates. Contact admin to export the full list.
+          </div>
+        )}
+
+        {content}
       </div>
 
       {selectedCandidate && (
         <ErrorBoundary>
           <Suspense fallback={<InlineLoadingFallback />}>
             <Modal
-              isOpen={!!selectedCandidate}
+              isOpen={true}
               onClose={handleCloseModal}
               title="Candidate Profile"
             >
