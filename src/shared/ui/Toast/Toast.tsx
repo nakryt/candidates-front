@@ -35,13 +35,11 @@ export const Toast: FC<ToastProps> = ({ toast, onDismiss }) => {
   const duration = toast.duration ?? 5000;
 
   useEffect(() => {
-    if (duration > 0) {
-      const timer = setTimeout(() => {
-        onDismiss(toast.id);
-      }, duration);
-
-      return () => clearTimeout(timer);
-    }
+    if (duration <= 0) return;
+    const timer = setTimeout(() => {
+      onDismiss(toast.id);
+    }, duration);
+    return () => clearTimeout(timer);
   }, [toast.id, duration, onDismiss]);
 
   const containerClass = `

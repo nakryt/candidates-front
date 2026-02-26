@@ -2,13 +2,14 @@ import axios, { AxiosError } from "axios";
 import { API_URL } from "./constants";
 import type { ApiError } from "./types";
 
-console.log("import.meta.env.VITE_API_URL", import.meta.env.VITE_API_URL);
-
 const api = axios.create({
   baseURL: API_URL,
   timeout: 10000, // 10 seconds
   headers: {
     "Content-Type": "application/json",
+    ...(import.meta.env.VITE_API_KEY
+      ? { "X-API-Key": import.meta.env.VITE_API_KEY as string }
+      : {}),
   },
 });
 

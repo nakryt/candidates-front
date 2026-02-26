@@ -24,6 +24,7 @@ const Modal: FC<ModalProps> = (props) => {
     if (!isOpen) return;
 
     previousActiveElementRef.current = document.activeElement as HTMLElement;
+    const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
     const controller = new AbortController();
@@ -36,7 +37,7 @@ const Modal: FC<ModalProps> = (props) => {
     }, 0);
 
     return () => {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = prevOverflow;
       controller.abort();
 
       if (previousActiveElementRef.current) {

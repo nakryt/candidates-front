@@ -1,4 +1,5 @@
 import react from "@vitejs/plugin-react";
+import type { MinifyOptions } from "terser";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
@@ -20,7 +21,7 @@ export default defineConfig({
       format: {
         comments: false, // Remove all comments
       },
-    } satisfies Record<string, unknown>, // Type assertion for terser options compatibility
+    } satisfies MinifyOptions,
 
     // Code splitting configuration
     rollupOptions: {

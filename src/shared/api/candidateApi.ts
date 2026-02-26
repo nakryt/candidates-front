@@ -1,4 +1,4 @@
-import type { Candidate, CandidateStatus } from "../types/candidate";
+import type { Candidate, CandidateDetail, CandidateStatus } from "../types/candidate";
 import api from "./api";
 
 export interface PaginatedResponse<T> {
@@ -33,21 +33,21 @@ export const candidateApi = {
     return response.data;
   },
 
-  getById: async (id: number): Promise<Candidate> => {
-    const response = await api.get<Candidate>(`/candidates/${id}`);
+  getById: async (id: number): Promise<CandidateDetail> => {
+    const response = await api.get<CandidateDetail>(`/candidates/${id}`);
     return response.data;
   },
 
-  create: async (payload: CreateCandidatePayload): Promise<Candidate> => {
-    const response = await api.post<Candidate>("/candidates", payload);
+  create: async (payload: CreateCandidatePayload): Promise<CandidateDetail> => {
+    const response = await api.post<CandidateDetail>("/candidates", payload);
     return response.data;
   },
 
   updateStatus: async (
     id: number,
     status: CandidateStatus,
-  ): Promise<Candidate> => {
-    const response = await api.patch<Candidate>(`/candidates/${id}/status`, {
+  ): Promise<CandidateDetail> => {
+    const response = await api.patch<CandidateDetail>(`/candidates/${id}/status`, {
       status,
     });
     return response.data;

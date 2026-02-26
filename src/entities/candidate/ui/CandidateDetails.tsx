@@ -1,9 +1,11 @@
 import type { FC } from "react";
+import { useEffect, useState } from "react";
 import StatusSelect from "../../../features/candidate-status-update/StatusSelect";
+import { candidateApi } from "../../../shared/api/candidateApi";
 import { Avatar } from "../../../shared/ui/Avatar";
 import { Chip } from "../../../shared/ui/Chip";
 import { Calendar, Mail, Phone } from "../../../shared/ui/icons";
-import type { Candidate, CandidateStatus } from "../model/types";
+import type { Candidate, CandidateDetail, CandidateStatus } from "../model/types";
 
 interface CandidateDetailsProps {
   candidate: Candidate;
@@ -12,10 +14,43 @@ interface CandidateDetailsProps {
 
 const CandidateDetails: FC<CandidateDetailsProps> = (props) => {
   const { candidate, onStatusChange } = props;
-  const handleChangeStatus = (status: CandidateStatus) =>
-    onStatusChange(candidate.id, status);
+
+  const [detail, setDetail] = useState<CandidateDetail | null>(null);
+  const [isLoadingDetail, setIsLoadingDetail] = useState(false);
+  const [isStatusUpdating, setIsStatusUpdating] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    setIsLoadingDetail(true);
+    setDetail(null);
+
+    candidateApi.getById(candidate.id).then((data) => {
+      if (!cancelled) {
+        setDetail(data);
+        setIsLoadingDetail(false);
+      }
+    }).catch(() => {
+      if (!cancelled) {
+        setIsLoadingDetail(false);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [candidate.id]);
+
+  const handleChangeStatus = async (status: CandidateStatus) => {
+    setIsStatusUpdating(true);
+    try {
+      await onStatusChange(candidate.id, status);
+    } finally {
+      setIsStatusUpdating(false);
+    }
+  };
 
   const appliedDate = new Date(candidate.createdAt).toLocaleDateString();
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
@@ -27,20 +62,28 @@ const CandidateDetails: FC<CandidateDetailsProps> = (props) => {
           </p>
 
           <div className="mt-4 flex flex-wrap justify-center sm:justify-start gap-4">
-            <a
-              href={`mailto:${candidate.email}`}
-              className="inline-flex items-center text-sm text-blue-600 hover:underline"
-            >
-              <Mail className="h-4 w-4 mr-1.5" />
-              {candidate.email}
-            </a>
-            <a
-              href={`tel:${candidate.phone}`}
-              className="inline-flex items-center text-sm text-blue-600 hover:underline"
-            >
-              <Phone className="h-4 w-4 mr-1.5" />
-              {candidate.phone}
-            </a>
+            {isLoadingDetail ? (
+              <span className="inline-flex items-center text-sm text-gray-400">
+                Loading contact info...
+              </span>
+            ) : detail ? (
+              <>
+                <a
+                  href={`mailto:${detail.email}`}
+                  className="inline-flex items-center text-sm text-blue-600 hover:underline"
+                >
+                  <Mail className="h-4 w-4 mr-1.5" />
+                  {detail.email}
+                </a>
+                <a
+                  href={`tel:${detail.phone}`}
+                  className="inline-flex items-center text-sm text-blue-600 hover:underline"
+                >
+                  <Phone className="h-4 w-4 mr-1.5" />
+                  {detail.phone}
+                </a>
+              </>
+            ) : null}
           </div>
         </div>
       </div>
@@ -51,9 +94,13 @@ const CandidateDetails: FC<CandidateDetailsProps> = (props) => {
             <h4 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-3">
               Description
             </h4>
-            <p className="text-gray-600 leading-relaxed">
-              {candidate.description}
-            </p>
+            {isLoadingDetail ? (
+              <p className="text-gray-400 text-sm">Loading...</p>
+            ) : (
+              <p className="text-gray-600 leading-relaxed">
+                {detail?.description}
+              </p>
+            )}
           </div>
 
           <div>
@@ -76,6 +123,7 @@ const CandidateDetails: FC<CandidateDetailsProps> = (props) => {
             <StatusSelect
               currentStatus={candidate.status}
               onChange={handleChangeStatus}
+              disabled={isStatusUpdating}
             />
 
             <div className="mt-6 pt-6 border-t border-gray-200">

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useOptimistic, useState } from "react";
+import { startTransition, useCallback, useEffect, useOptimistic, useState } from "react";
 import {
   candidateApi,
   type CreateCandidatePayload,
@@ -41,6 +41,7 @@ type OptimisticAction =
 
 export const useCandidates = () => {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -71,6 +72,7 @@ export const useCandidates = () => {
       setError(null);
       const response = await candidateApi.getAll(1, 100);
       setCandidates(response.data);
+      setTotal(response.total);
     } catch (err) {
       const errorMessage = getErrorMessage(err);
       setError(errorMessage);
@@ -88,7 +90,9 @@ export const useCandidates = () => {
         throw new Error("Candidate not found");
       }
 
-      updateOptimisticCandidates({ type: "update_status", id, status });
+      startTransition(() => {
+        updateOptimisticCandidates({ type: "update_status", id, status });
+      });
 
       try {
         const updated = await candidateApi.updateStatus(id, status);
@@ -110,18 +114,17 @@ export const useCandidates = () => {
         id: Date.now(),
         name: payload.name,
         position: payload.position,
-        email: payload.email,
-        phone: payload.phone,
-        description: payload.description || "",
         status: payload.status || "active",
         skills: [],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
 
-      updateOptimisticCandidates({
-        type: "add",
-        candidate: optimisticCandidate,
+      startTransition(() => {
+        updateOptimisticCandidates({
+          type: "add",
+          candidate: optimisticCandidate,
+        });
       });
 
       try {
@@ -144,6 +147,7 @@ export const useCandidates = () => {
 
   return {
     candidates: optimisticCandidates,
+    total,
     loading,
     error,
     updateCandidateStatus,

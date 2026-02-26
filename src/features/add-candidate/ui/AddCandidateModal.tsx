@@ -61,12 +61,20 @@ const AddCandidateModal: FC<AddCandidateModalProps> = (props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [skills, setSkills] = useState<Skill[]>([]);
   const [skillsLoading, setSkillsLoading] = useState(true);
+  const [rateLimitCooldown, setRateLimitCooldown] = useState(0);
+
+  useEffect(() => {
+    if (rateLimitCooldown <= 0) return;
+    const timer = setTimeout(() => setRateLimitCooldown((prev) => prev - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [rateLimitCooldown]);
 
   useEffect(() => {
     if (!isOpen) {
       setFormData(initialFormData);
       setErrors({});
       setIsSubmitting(false);
+      setRateLimitCooldown(0);
       return;
     }
 
@@ -163,6 +171,7 @@ const AddCandidateModal: FC<AddCandidateModalProps> = (props) => {
         } else if (error.statusCode === 429) {
           errorMessage =
             "Too many requests. Please wait a moment and try again.";
+          setRateLimitCooldown(30);
         } else if (error.statusCode >= 500) {
           errorMessage = "Server error occurred. Please try again later.";
         } else {
@@ -286,8 +295,17 @@ const AddCandidateModal: FC<AddCandidateModalProps> = (props) => {
           >
             Cancel
           </Button>
-          <Button type="submit" variant="primary" isLoading={isSubmitting}>
-            {isSubmitting ? "Creating..." : "Create Candidate"}
+          <Button
+            type="submit"
+            variant="primary"
+            isLoading={isSubmitting}
+            disabled={isSubmitting || rateLimitCooldown > 0}
+          >
+            {rateLimitCooldown > 0
+              ? `Please wait ${rateLimitCooldown}s`
+              : isSubmitting
+                ? "Creating..."
+                : "Create Candidate"}
           </Button>
         </div>
       </form>
